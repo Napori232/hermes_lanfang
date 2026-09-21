@@ -26,8 +26,11 @@ Codex 执行多步骤任务、进入下一阶段或遇到阻断性错误时，�
 3. **最终任务达成 (Completion)**：
    - 整体构建或重构验证通过，推送结果概览。
 
-## 执行命令标准
+## 调度与最小上下文外派 (Minimal Context Dispatch)
+当需要将重度代码任务派发给 Codex 时：
+1. **上下文切片**：只传递任务目标与目标代码文件路径，不传递主 Agent 会话历史与个人记忆。
+2. **执行脚本**：可通过 `scripts/dispatch_codex.py` 或直接运行 CLI 命令：
 ```bash
-codex exec --sandbox danger-full-access "<任务内容与阶段定义>"
+codex exec --sandbox danger-full-access "<任务指令与相关文件路径>"
 ```
-调度器捕获输出流中的 Phase/Step 标记，实时触发直推。
+3. **结果回传**：Codex 独立完成代码读写与测试验证后，仅返回执行结果摘要给主 Agent。
