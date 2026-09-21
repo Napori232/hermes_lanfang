@@ -1,0 +1,27 @@
+# Hermes Profile Lan-Fang Configuration Template (Sanitized)
+# 复制为 config.yaml 并填入你自己的 key/URL
+
+model:
+  default: gemini-3.7-flash
+  provider: custom # or your provider
+  base_url: https://your-inference-endpoint/v1
+  api_mode: chat_completions
+
+compression:
+  enabled: true
+  threshold: 0.15
+  threshold_tokens: 20000
+  target_ratio: 0.08
+  protect_last_n: 4
+  idle_compact_after_seconds: 1800
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  memory_char_limit: 2200
+  user_char_limit: 1375
+
+auxiliary:
+  title_generation:
+    provider: auto
+    model: ''

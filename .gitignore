@@ -1,0 +1,36 @@
+# Hermes Profile Lan-Fang .gitignore
+# 1. 密钥与私有凭证
+config.yaml
+*.env
+*.key
+*.pem
+credentials*
+
+# 2. 个人私密记忆与会话历史（姓名、课表、聊天记录等）
+memories/
+sessions/
+runtime/
+pending/
+.curator_backups/
+.curator_state
+.curator_ledger.jsonl
+.usage.json
+.usage.json.lock
+.locks/
+.skills_prompt_snapshot.json
+.update_check
+
+# 3. 微信与多平台登录凭证与会话状态
+weixin/
+platforms/
+
+# 4. 本地数据库与状态缓存
+*.db
+*.db-*
+*.lock
+*.heartbeat
+*.jsonl
+*_cache.json
+*_cache.etag
+desktop/interrupted_turns.json
+lsp/node_modules/
