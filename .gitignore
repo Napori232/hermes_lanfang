@@ -5,6 +5,19 @@ config.yaml
 *.key
 *.pem
 credentials*
+auth.json
+backups/
+gateway-service/
+gateway_state.json
+processes.json
+channel_directory.json
+.hermes_history
+state/
+logs/
+cache/
+cron/
+skills_optional_backup/
+*.log
 
 # 2. 个人私密记忆与会话历史（姓名、课表、聊天记录等）
 memories/
