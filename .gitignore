@@ -19,6 +19,14 @@ cron/
 skills_optional_backup/
 *.log
 
+# 运行时生成物与安装检查缓存
+__pycache__/
+*.py[cod]
+plugin-update-checks/
+source-checks/
+telemetry/
+plugins/.install-metadata.json
+
 # 2. 个人私密记忆与会话历史（姓名、课表、聊天记录等）
 memories/
 sessions/

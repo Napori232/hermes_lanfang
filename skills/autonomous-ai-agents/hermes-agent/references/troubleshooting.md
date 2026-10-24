@@ -2,7 +2,7 @@
 
 ### Voice not working
 1. Check `stt.enabled: true` in config.yaml
-2. Verify provider: `pip install faster-whisper` or set API key
+2. Verify provider: `python -c "import pm; pm.sync_venv(['stt-whisper'], explicit=True)"` or set API key
 3. In gateway: `/restart`. In CLI: exit and relaunch.
 
 ### Tool not available
@@ -14,7 +14,13 @@
 1. `hermes doctor` — check config and dependencies
 2. `hermes auth` — re-authenticate OAuth providers (or `hermes auth add <provider>`)
 3. Check `.env` has the right API key
-4. **Copilot 403**: `gh auth login` tokens do NOT work for Copilot API. You must use the Copilot-specific OAuth device code flow via `hermes model` → GitHub Copilot.
+4. **Desktop appears to switch away from the configured default:**
+   - Inspect the profile's `logs/agent.log` at session creation and distinguish `source=client override` from the profile default. An explicit Desktop `session.create` model/provider wins over `model.default` and `model.provider`; do not blame fallback or the gateway before checking this field.
+   - If the source is a client override, open the Desktop composer model menu and choose **Follow default model**. Selecting the desired model directly remains a persisted manual override, even when it currently matches the configured default.
+   - Create a new chat after returning to the default source; existing sessions retain their session route unless explicitly switched.
+   - Verify the resolved provider/model in the API-call log. A generic adapter label such as `provider=custom` is not proof that Hermes selected a particular named `custom:<provider>` entry.
+   - Preserve alternative providers unless the user explicitly asks to remove them; fixing the default-selection source should not disable manual switching.
+5. **Copilot 403**: `gh auth login` tokens do NOT work for Copilot API. You must use the Copilot-specific OAuth device code flow via `hermes model` → GitHub Copilot.
 
 ### Changes not taking effect
 - **Tools/skills:** `/reset` starts a new session with updated toolset

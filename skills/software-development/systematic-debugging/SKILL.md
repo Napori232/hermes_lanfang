@@ -137,6 +137,25 @@ git diff
 git log -p --follow src/problematic_file.py | head -100
 ```
 
+#### Godot: visible content missing while collisions remain
+
+Treat this as a render-state/physics-state mismatch, not as proof that the scene failed to load:
+
+1. Identify the chapter/phase scene and the script that activates it.
+2. Inspect the relevant `.tscn` nodes for serialized `visible = false`, alpha/modulate, layer/mask, camera, position, scale, and resource overrides.
+3. Trace the phase-switch routine separately for rendering and collision state. Setting a parent `CanvasItem.visible = true` does **not** clear a child's own `visible = false`, while a collision-enabling routine can still activate that child's physics nodes.
+4. Compare the current scene with Git before changing it. A newly added child-level visibility override is strong evidence when the parent is enabled normally and collisions are active.
+5. Verify the diagnosis by restoring only the implicated visual property and reproducing the exact chapter transition; do not remove collision data to hide the symptom.
+
+Use targeted searches before broad diffs on `.tscn` files:
+
+```text
+search_files("visible = false|modulate|visibility_layer", path="path/to/scene", file_glob="*.tscn")
+search_files("visible|collision|process_mode|phase", path="path/to/scripts", file_glob="*.gd")
+```
+
+Avoid dumping an unrestricted scene diff when a `.tscn` contains giant `PackedByteArray` tile data: one changed serialized line can produce megabytes of irrelevant output. Narrow by file/property first, then inspect only the small node ranges and relevant Git hunks.
+
 ### 4. Gather Evidence in Multi-Component Systems
 
 **WHEN system has multiple components (API → service → database, CI → build → deploy):**

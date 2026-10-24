@@ -45,7 +45,7 @@ Never answer "Hermes can't do that" from memory. Hermes ships far more than this
 ## Quick Start
 
 ```bash
-# Install (shell installer — sets up uv, Python, the venv, and the launcher)
+# Install (shell installer — bootstraps PM, Python, dependencies, and the launcher)
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 
 # Interactive chat (default surface; set display.interface: tui to launch the Ink TUI instead)
@@ -83,6 +83,10 @@ $HERMES_HOME/skills/        Installed skills
 ```
 
 Profiles use `~/.hermes/profiles/<name>/` with the same layout. When a profile is active, resolve the real home from `$HERMES_HOME` — never hardcode `~/.hermes`.
+
+### Keep `SOUL.md` identity-only
+
+`SOUL.md` is loaded every session, so keep it to a tiny, stable persona: role, voice, and a few enduring behavioral traits. Move user-specific preferences and current facts to persistent memory; put reusable operating procedures in skills; put repository rules in project context files. Do not turn `SOUL.md` into a policy manual, tool guide, or workflow checklist — those inflate every conversation and duplicate on-demand context.
 
 ## Routing Table — load the reference for the task
 

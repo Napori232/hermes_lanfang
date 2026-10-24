@@ -29,6 +29,33 @@ Full docs: https://hermes-agent.nousresearch.com/docs/integrations/providers
 | bedrock / vertex / azure-foundry | Cloud SDK / key | AWS SDK creds / Vertex ADC / `AZURE_FOUNDRY_API_KEY` |
 | custom | Config | `model.base_url` + `model.api_key` in config.yaml |
 
+### Multi-Key / Custom Providers (`custom_providers`)
+
+When configuring multiple keys from the same API relay/vendor, declare distinct entries under `custom_providers` in `config.yaml`:
+
+```yaml
+custom_providers:
+  - name: my-relay-1
+    api_key: sk-...
+    base_url: https://api.example.com/v1
+    model: gpt-5
+    models:
+      gpt-5: {}
+      gpt-4.5: {}
+    models_discovered: true
+  - name: my-relay-2
+    api_key: sk-...
+    base_url: https://api.example.com/v1
+    model: gpt-6-sol
+    models:
+      gpt-6-sol: {}
+      gpt-6.1-sol: {}
+    models_discovered: true
+```
+
+- **Switching in session**: `/model custom:<name>/<model_name>` (e.g. `/model custom:my-relay-2/gpt-6-sol`).
+- **Editing note**: Built-in file tools (`patch`, `write_file`) block direct modifications to Hermes core config files for security. Apply changes via `hermes config`, external terminal scripts, or direct user edit.
+
 Multiple credentials per provider pool and rotate automatically (`hermes auth`).
 Fallback chain when the primary fails: `hermes fallback add|remove|list`.
 

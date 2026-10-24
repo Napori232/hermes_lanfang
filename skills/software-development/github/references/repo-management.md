@@ -142,7 +142,54 @@ curl -s -X POST \
   -d '{"owner": "'"$GH_USER"'", "name": "my-new-app", "private": false}'
 ```
 
-## 3. Forking Repositories
+## 3. Push troubleshooting (SSH, LFS, and large assets)
+
+Use this sequence before changing configuration. It separates an LFS upload problem from the final Git ref update and prevents unnecessary history rewrites.
+
+1. Inspect the exact local/remote divergence and preserve a clean worktree:
+
+```bash
+git status -sb
+git log --oneline --decorate @{upstream}..HEAD
+git ls-remote origin "refs/heads/$(git branch --show-current)"
+```
+
+2. Estimate ordinary Git payload and list LFS work separately:
+
+```bash
+printf '%s\n%s\n' HEAD '^@{upstream}' | git pack-objects --stdout --revs | wc -c
+git lfs status
+git lfs push --dry-run origin "$(git branch --show-current)"
+```
+
+If LFS reports all objects uploaded but `git push` fails, retry the push once: the LFS objects are already present and the remaining operation is only the Git ref update.
+
+3. Diagnose SSH independently before modifying remotes:
+
+```bash
+ssh -vT -o ConnectTimeout=15 git@github.com
+```
+
+When public-key authentication succeeds but the push connection closes, suspect the network or proxy path. Check the resolved address and any SSH proxy configuration; a private or proxy-reserved address indicates interception.
+
+4. If port 22 is unreliable, offer SSH over GitHub's port 443 endpoint. This modifies `~/.ssh/config`, so obtain confirmation first, then add a `Host github.com` entry using `Hostname ssh.github.com`, `Port 443`, and `User git`. Verify the host key interactively or against GitHub's published fingerprints before retrying.
+
+5. Verify completion from both sides:
+
+```bash
+git push -v origin "$(git branch --show-current)"
+git status -sb
+git ls-remote origin "refs/heads/$(git branch --show-current)"
+```
+
+**Pitfalls**
+
+- Do not infer push duration from commit count; measure pack size and pending LFS objects separately because LFS uploads use a different endpoint and transfer protocol.
+- Do not claim a push succeeded merely because LFS reached 100%; Git still must update the remote branch ref after LFS finishes.
+- Do not delete or rewrite already-pushed history to remove assets without explicit approval. For local-only commits, back up the tip ref before any rewrite and verify the filtered range contains no matching paths afterward.
+- Ignore Godot `*.import` files only after confirming project conventions; they are regenerable metadata, but changing tracked files requires a separate deliberate cleanup.
+
+## 4. Forking Repositories
 
 **With gh:**
 
@@ -432,8 +479,8 @@ RUN_ID=<run_id>
 curl -s -L \
   -H "Authorization: token $GITHUB_TOKEN" \
   https://api.github.com/repos/$OWNER/$REPO/actions/runs/$RUN_ID/logs \
-  -o /tmp/ci-logs.zip
-cd /tmp && unzip -o ci-logs.zip -d ci-logs
+  -o ~/.hermes/cache/scratch/ci-logs.zip
+cd ~/.hermes/cache/scratch && unzip -o ci-logs.zip -d ci-logs
 
 # Re-run a failed workflow
 curl -s -X POST \
