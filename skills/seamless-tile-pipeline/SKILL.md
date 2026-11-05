@@ -1,5 +1,5 @@
 ---
-name: seamless-tile-processing
+name: seamless-tile-pipeline
 description: "Use when creating horizontally seamless 2D game tiles."
 version: 1.1.0
 ---

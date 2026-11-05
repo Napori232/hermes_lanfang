@@ -1,5 +1,5 @@
 ---
-name: tilemap-terrain-synthesis
+name: tilemap-terrain-synthesis-master
 description: "Use when synthesizing 2D autotile terrain from art."
 ---
 
